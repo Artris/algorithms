@@ -47,4 +47,11 @@ describe("Dynamic Array", () => {
         let e4 = Dynamic_Array.get(dynamic_array, 4);
         expect((e0, e7, e4)) |> toEqual((10, 11, 44));
     });
+
+    test("push", () => {
+        let dynamic_array  = dynamic_array^;
+        Dynamic_Array.push(dynamic_array, 9);
+        let e8 = Dynamic_Array.get(dynamic_array, 8);
+        expect(e8) |> toEqual(9);
+    });
 });
