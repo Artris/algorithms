@@ -35,3 +35,17 @@ let set = (dynamic_array, index, value) => {
     | ind => Array.set(array^, ind, Some(value))
     };
 }
+
+let push = (dynamic_array, value) => {
+    let {size, array} = dynamic_array;
+    let space = Array.length(array^);
+
+    if(size^ == space){
+        array := Array.append(array^, Array.make(space + 1, None));
+    };
+    
+    Array.set(array^, size^, Some(value));
+    size := size^ + 1;
+
+    dynamic_array;
+}
