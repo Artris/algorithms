@@ -46,6 +46,24 @@ let push = (dynamic_array, value) => {
     
     Array.set(array^, size^, Some(value));
     size := size^ + 1;
+}
 
-    dynamic_array;
+let pop = dynamic_array => {
+    let {size, array} = dynamic_array;
+    let space = Array.length(array^);
+
+    if(size^ == 0){
+        raise(InvalidArgument("array is empty"))
+    } else {
+        let index = size^ - 1;
+        let value = Array.get(array^, index);
+        Array.set(array^, index, None);
+
+        if (size^ < space / 4){
+            array := Array.sub(array^, 0, space / 2);
+        };
+
+        size := size^ - 1;
+        contents(value);
+    }
 }
