@@ -54,4 +54,17 @@ describe("Dynamic Array", () => {
         let e8 = Dynamic_Array.get(dynamic_array, 8);
         expect(e8) |> toEqual(9);
     });
+
+    test("pop", () => {
+        let dynamic_array  = dynamic_array^;
+        let e7 = Dynamic_Array.pop(dynamic_array);
+        let e6 = Dynamic_Array.pop(dynamic_array);
+        let e5 = Dynamic_Array.pop(dynamic_array);
+        let e4 = Dynamic_Array.pop(dynamic_array);
+        let e3 = Dynamic_Array.pop(dynamic_array);
+        let e2 = Dynamic_Array.pop(dynamic_array);
+        let e1 = Dynamic_Array.pop(dynamic_array);
+        let e0 = Dynamic_Array.pop(dynamic_array);
+        expect((e0, e1, e2, e3, e4, e5, e6, e7)) |> toEqual((1, 2, 3, 4, 5, 6, 7, 8));
+    });
 });
