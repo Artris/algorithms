@@ -6,6 +6,7 @@ describe("Dynamic Array", () => {
     beforeEach(() => {
         dynamic_array := Dynamic_Array.create();
         let dynamic_array = dynamic_array^;
+        Dynamic_Array.push(dynamic_array, 0);
         Dynamic_Array.push(dynamic_array, 1);
         Dynamic_Array.push(dynamic_array, 2);
         Dynamic_Array.push(dynamic_array, 3);
@@ -13,7 +14,6 @@ describe("Dynamic Array", () => {
         Dynamic_Array.push(dynamic_array, 5);
         Dynamic_Array.push(dynamic_array, 6);
         Dynamic_Array.push(dynamic_array, 7);
-        Dynamic_Array.push(dynamic_array, 8);
     });
 
     test("length", () => {
@@ -33,19 +33,19 @@ describe("Dynamic Array", () => {
         let e6 = Dynamic_Array.get(dynamic_array, 6);
         let e7 = Dynamic_Array.get(dynamic_array, 7);
 
-        expect((e0, e1, e2, e3, e4, e5, e6, e7)) |> toEqual((1, 2, 3, 4, 5, 6, 7, 8));
+        expect((e0, e1, e2, e3, e4, e5, e6, e7)) |> toEqual((0, 1, 2, 3, 4, 5, 6, 7));
     });
 
     test("set", () => {
         let dynamic_array  = dynamic_array^;
         Dynamic_Array.set(dynamic_array, 0, 10);
         Dynamic_Array.set(dynamic_array, 7, 11);
-        Dynamic_Array.set(dynamic_array, 4, 44);
+        Dynamic_Array.set(dynamic_array, 4, 14);
 
         let e0 = Dynamic_Array.get(dynamic_array, 0);
         let e7 = Dynamic_Array.get(dynamic_array, 7);
         let e4 = Dynamic_Array.get(dynamic_array, 4);
-        expect((e0, e7, e4)) |> toEqual((10, 11, 44));
+        expect((e0, e7, e4)) |> toEqual((10, 11, 14));
     });
 
     test("push", () => {
@@ -65,6 +65,6 @@ describe("Dynamic Array", () => {
         let e2 = Dynamic_Array.pop(dynamic_array);
         let e1 = Dynamic_Array.pop(dynamic_array);
         let e0 = Dynamic_Array.pop(dynamic_array);
-        expect((e0, e1, e2, e3, e4, e5, e6, e7)) |> toEqual((1, 2, 3, 4, 5, 6, 7, 8));
+        expect((e0, e1, e2, e3, e4, e5, e6, e7)) |> toEqual((0, 1, 2, 3, 4, 5, 6, 7));
     });
 });
