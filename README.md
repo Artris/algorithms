@@ -3,6 +3,9 @@ Implementation of data structures and algorithms introduced in MIT OCW [6006](ht
 
 *Currently focusing on data structures and algorithms introduced in 6006*
 
+## Interested in Contributing?
+Checkout the [contribution guidelines](https://github.com/Artris/algorithms/blob/master/CONTRIBUTING.md).
+
 ## 6006 Algorithms and Data Structures
 
 - [ ] Insertion Sort
