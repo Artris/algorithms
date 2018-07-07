@@ -19,22 +19,25 @@ let contents =
     | None => raise(InconsistentState("expected a value"))
     | Some(value) => value;
 
-let get = (dynamic_array, index) => {
+let execute_if_index_is_valid = (dynamic_array, index, fn) => {
     let {size, array} = dynamic_array;
-    switch index {
-    | ind when ind < 0 => raise(InvalidArgument("index out of bounds"))
-    | ind when ind >= size^ => raise(InvalidArgument("index out of bounds"))
-    | ind => Array.get(array^, ind) |> contents
-    };
+    let size = size^;
+    let array = array^;
+    if(index < 0 || index >= size) {
+        raise(InvalidArgument("index out of bounds"))
+    } else {
+        fn(array);
+    }
+};
+
+let get = (dynamic_array, index) => {
+    let fn = array => { Array.get(array, index) |> contents };
+    execute_if_index_is_valid(dynamic_array, index, fn);
 };
 
 let set = (dynamic_array, index, value) => {
-    let {size, array} = dynamic_array;
-    switch index {
-    | ind when ind < 0 => raise(InvalidArgument("index out of bounds"))
-    | ind when ind >= size^ => raise(InvalidArgument("index out of bounds"))
-    | ind => Array.set(array^, ind, Some(value))
-    };
+    let fn = array => { Array.set(array, index, Some(value)) };
+    execute_if_index_is_valid(dynamic_array, index, fn);
 };
 
 let push = (dynamic_array, value) => {
