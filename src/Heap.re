@@ -82,10 +82,10 @@ let extract = heap => {
     | _ => {
         let q = heap.queue;
         let heap_size = Dynamic_Array.length(q);
-        let head = Dynamic_Array.get(q, 0);
         swap(0, heap_size - 1, q);
+        let res = Dynamic_Array.pop(heap.queue);
         sift_down(0, heap.compare, q);
-        head.value;
+        res.value;
     }
     };
 };
