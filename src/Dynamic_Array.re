@@ -71,3 +71,5 @@ let pop = dynamic_array => {
         contents(value);
     }
 };
+
+let inspect = dynamic_array => Js.Array.toString(dynamic_array.array^);
