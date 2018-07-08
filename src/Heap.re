@@ -24,7 +24,7 @@ let parent =
 let left = index => 2 * index + 1;
 let right = index => 2 * (index + 1);
 
-let swap = (a, b, queue) => {
+let swap = (queue, a, b) => {
     let a' = Dynamic_Array.get(queue, a);
     let b' = Dynamic_Array.get(queue, b);
     Dynamic_Array.set(queue, a, b');
@@ -33,7 +33,7 @@ let swap = (a, b, queue) => {
 
 let key = (queue, index) => Dynamic_Array.get(queue, index).key;
 
-let rec sift_down = (index, compare, queue) => {
+let rec sift_down = (queue, index, compare) => {
     let key = key(queue);
     let heap_size = Dynamic_Array.length(queue);
     let left_index = left(index);
@@ -52,19 +52,19 @@ let rec sift_down = (index, compare, queue) => {
     
     let max_priority_index = max_priority_index^;
     if(max_priority_index != index){
-        swap(max_priority_index, index, queue);
-        sift_down(max_priority_index, compare, queue);
+        swap(queue, max_priority_index, index);
+        sift_down(queue, max_priority_index, compare);
     }
 };
 
-let rec sift_up = (index, compare, queue) => {
+let rec sift_up = (queue, index, compare) => {
     let key = key(queue);
     let parent_index = parent(index);
 
     switch parent_index {
     | Some(p_ind) when compare(key(index), key(p_ind)) => {
-        swap(index, p_ind, queue);
-        sift_up(p_ind, compare, queue);
+        swap(queue, index, p_ind);
+        sift_up(queue, p_ind, compare);
     }
     | _ => () 
     };
@@ -72,19 +72,19 @@ let rec sift_up = (index, compare, queue) => {
 
 let fix_last = (compare, queue) => {
     let heap_size = Dynamic_Array.length(queue);
-    sift_up(heap_size - 1, compare, queue);
+    sift_up(queue, heap_size - 1, compare);
 };
 
 let extract = heap => {
-    switch (Dynamic_Array.length(heap.queue)) {
+    let {queue, compare} = heap;
+    let heap_size = Dynamic_Array.length(queue);
+    switch heap_size {
     | 0 => raise(EmptyQueue)
-    | 1 => Dynamic_Array.pop(heap.queue).value;
+    | 1 => Dynamic_Array.pop(queue).value;
     | _ => {
-        let q = heap.queue;
-        let heap_size = Dynamic_Array.length(q);
-        swap(0, heap_size - 1, q);
-        let res = Dynamic_Array.pop(heap.queue);
-        sift_down(0, heap.compare, q);
+        swap(queue, 0, heap_size - 1);
+        let res = Dynamic_Array.pop(queue);
+        sift_down(queue, 0, compare);
         res.value;
     }
     };
@@ -96,7 +96,8 @@ let add = (heap, key, value) => {
 };
 
 let head = heap => {
-    switch (Dynamic_Array.length(heap.queue)) {
+    let heap_size = Dynamic_Array.length(heap.queue);
+    switch heap_size {
     | 0 => raise(EmptyQueue)
     | _ => Dynamic_Array.get(heap.queue, 0).value
     };
@@ -110,9 +111,9 @@ let update_priority = (heap, index, new_priority) => {
 
     let has_higher_priority = heap.compare(new_priority, current_priority);
     if(has_higher_priority){
-        sift_up(index, heap.compare, queue)
+        sift_up(queue, index, heap.compare)
     } else {
-        sift_down(index, heap.compare, queue)
+        sift_down(queue, index, heap.compare)
     }
 }
 
