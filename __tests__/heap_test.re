@@ -1,9 +1,12 @@
 open Jest;
 open Expect;
 
-describe("Heap", () => {  
-    test("heap sort", () => {
-        let heap = Heap.create((a, b) => a < b);
+describe("Heap", () => {
+    let heap = ref(Heap.create((a, b) => a < b));
+    beforeEach(() => {
+        heap := Heap.create((a, b) => a < b);
+        let heap = heap^;
+
         Heap.add(heap, 9, "9");
         Heap.add(heap, 8, "8");
         Heap.add(heap, 7, "7");
@@ -13,6 +16,34 @@ describe("Heap", () => {
         Heap.add(heap, 6, "6");
         Heap.add(heap, 5, "5");
         Heap.add(heap, 4, "4");
+    });
+
+    test("size", () => {
+        let heap = heap^;
+        let heap_size = Heap.size(heap);
+
+        expect(heap_size) |> toBe(9);
+    });
+
+    test("head", () => {
+        let heap = heap^;
+        let head = Heap.head(heap);
+
+        expect(head) |> toBe("1");
+    });
+
+    test("decrease_root_priority", () => {
+        let heap = heap^;
+        Heap.decrease_root_priority(heap, 11);
+        Heap.decrease_root_priority(heap, 12);
+        Heap.decrease_root_priority(heap, 13);
+        let head = Heap.head(heap);
+
+        expect(head) |> toBe("4");
+    });
+
+    test("heap sort", () => {
+        let heap = heap^;
 
         let e1 = Heap.extract(heap);
         let e2  = Heap.extract(heap);
