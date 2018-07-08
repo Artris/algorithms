@@ -119,5 +119,3 @@ let decrease_root_priority = ({queue, compare}, new_priority) => {
 }
 
 let size = heap => Dynamic_Array.length(heap.queue);
-
-let inspect = heap => Dynamic_Array.inspect(heap.queue);
