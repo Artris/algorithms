@@ -24,13 +24,6 @@ let parent =
 let left = index => 2 * index + 1;
 let right = index => 2 * (index + 1);
 
-let swap = (queue, a, b) => {
-    let a' = Dynamic_Array.get(queue, a);
-    let b' = Dynamic_Array.get(queue, b);
-    Dynamic_Array.set(queue, a, b');
-    Dynamic_Array.set(queue, b, a');
-};
-
 let key = (queue, index) => Dynamic_Array.get(queue, index).key;
 
 let rec sift_down = (queue, index, compare) => {
@@ -52,7 +45,7 @@ let rec sift_down = (queue, index, compare) => {
     
     let max_priority_index = max_priority_index^;
     if(max_priority_index != index){
-        swap(queue, max_priority_index, index);
+        Dynamic_Array.swap(queue, max_priority_index, index);
         sift_down(queue, max_priority_index, compare);
     }
 };
@@ -63,7 +56,7 @@ let rec sift_up = (queue, index, compare) => {
 
     switch parent_index {
     | Some(p_ind) when compare(key(index), key(p_ind)) => {
-        swap(queue, index, p_ind);
+        Dynamic_Array.swap(queue, index, p_ind);
         sift_up(queue, p_ind, compare);
     }
     | _ => () 
@@ -82,7 +75,7 @@ let extract = heap => {
     | 0 => raise(EmptyQueue)
     | 1 => Dynamic_Array.pop(queue).value;
     | _ => {
-        swap(queue, 0, heap_size - 1);
+        Dynamic_Array.swap(queue, 0, heap_size - 1);
         let res = Dynamic_Array.pop(queue);
         sift_down(queue, 0, compare);
         res.value;
