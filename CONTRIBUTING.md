@@ -11,3 +11,8 @@ Please read [How to GitHub: Fork, Branch, Track, Squash and Pull Request](https:
 - Add unit tests for all the functions specified in the signature file. We are using [bs-jest](https://github.com/glennsl/bs-jest) for unit tests
 - When you're happy with your solution create a pull request against the `master` branch
 - Address the comments on your pull request
+
+## Note
+- Avoid using mutation as much as possible
+- Use tail recursive functions instead of imperative loops
+- Do not use JavaScript interoperability 
