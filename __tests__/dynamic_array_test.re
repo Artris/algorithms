@@ -67,4 +67,12 @@ describe("Dynamic Array", () => {
         let e0 = Dynamic_Array.pop(dynamic_array);
         expect((e0, e1, e2, e3, e4, e5, e6, e7)) |> toEqual((0, 1, 2, 3, 4, 5, 6, 7));
     });
+
+    test("swap", () => {
+        let dynamic_array  = dynamic_array^;
+        Dynamic_Array.swap(dynamic_array, 2, 5);
+        let e2 = Dynamic_Array.get(dynamic_array, 2);
+        let e5 = Dynamic_Array.get(dynamic_array, 5);
+        expect((e2, e5)) |> toEqual((5, 2));
+    });
 });

@@ -71,3 +71,12 @@ let pop = dynamic_array => {
         contents(value);
     }
 };
+
+let swap = (dynamic_array, a, b) => {
+    let a' = get(dynamic_array, a);
+    let b' = get(dynamic_array, b);
+    set(dynamic_array, a, b');
+    set(dynamic_array, b, a');
+}
+
+let inspect = dynamic_array => Js.Array.toString(dynamic_array.array^);
