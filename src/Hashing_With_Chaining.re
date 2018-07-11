@@ -8,14 +8,14 @@ type bucket('a, 'b) = list(element('a, 'b));
 type t('a, 'b) = {
     pre_hash: 'a => int,
     hash: int => int => int,
-    table: array(bucket('a, 'b)),
+    table: ref(array(bucket('a, 'b))),
     num_bindings: int
 };
 
 let create = (~pre_hash, ~hash) => {
     pre_hash,
     hash,
-    table: [||],
+    table: ref([|[]|]),
     num_bindings: 0
 };
 
@@ -23,9 +23,10 @@ exception Not_found;
 
 let bucket = (map, key) => {
     let {pre_hash, hash, table} = map;
+    let table = table^;
     let number_buckets = Array.length(table);
     let bucket_index = pre_hash(key) |> hash(number_buckets);
-    let bucket = Array.get(map.table, bucket_index);
+    let bucket = Array.get(table, bucket_index);
     (bucket, bucket_index)
 };
 
@@ -49,12 +50,12 @@ let find = (map, key) => {
 
 let add = (map, key, value) => {
     let (bucket, index) =  bucket(map, key);
-    Array.set(map.table, index, [{key, value}, ...bucket]);
+    Array.set(map.table^, index, [{key, value}, ...bucket]);
 };
 
 let remove = (map, key) => {
     let (bucket, index) =  bucket(map, key);
-    Array.set(map.table, index, remove_from_bucket(bucket, key));
+    Array.set(map.table^, index, remove_from_bucket(bucket, key));
 };
 
 let length = map => map.num_bindings;
