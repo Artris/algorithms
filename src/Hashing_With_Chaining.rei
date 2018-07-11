@@ -7,5 +7,5 @@ let create: (
 
 let find: (t('a, 'b), 'a) => 'b;
 let add: (t('a, 'b), 'a, 'b) => unit;
-/* let remove: (t('a, 'b), 'a) => unit; */
-/* let length: t('a, 'b) => int; */
+let remove: (t('a, 'b), 'a) => unit;
+let length: t('a, 'b) => int;

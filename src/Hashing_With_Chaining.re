@@ -19,22 +19,42 @@ let create = (~pre_hash, ~hash) => {
     num_bindings: 0
 };
 
-let bucket_index = (map, key) => {
+exception Not_found;
+
+let bucket = (map, key) => {
     let {pre_hash, hash, table} = map;
     let number_buckets = Array.length(table);
-    pre_hash(key) |> hash(number_buckets);
-}
+    let bucket_index = pre_hash(key) |> hash(number_buckets);
+    let bucket = Array.get(map.table, bucket_index);
+    (bucket, bucket_index)
+};
+
+let remove_from_bucket = (bucket, key) => {
+    let rec helper = (prev, next) => {
+        switch next {
+        | [] => raise(Not_found)
+        | [e, ...rest] when e.key == key => List.rev_append(prev, rest);
+        | [e, ...rest] => helper([e, ...prev], rest);
+        };
+    };
+
+    helper([], bucket);
+};
 
 let find = (map, key) => {
-    let bucket_index =  bucket_index(map, key);
-    let bucket = Array.get(map.table, bucket_index);
+    let (bucket, _index) =  bucket(map, key);
     let element = List.find(element => element.key == key, bucket);
     element.value;
 };
 
 let add = (map, key, value) => {
-    let bucket_index =  bucket_index(map, key);
-    let bucket = Array.get(map.table, bucket_index);
-    let element = {key, value};
-    Array.set(map.table, bucket_index, [element, ...bucket]);
+    let (bucket, index) =  bucket(map, key);
+    Array.set(map.table, index, [{key, value}, ...bucket]);
 };
+
+let remove = (map, key) => {
+    let (bucket, index) =  bucket(map, key);
+    Array.set(map.table, index, remove_from_bucket(bucket, key));
+};
+
+let length = map => map.num_bindings;
