@@ -42,6 +42,12 @@ let remove_from_bucket = (bucket, key) => {
     helper([], bucket);
 };
 
+let iter = (f, map) => {
+    let f = e => f(e.key, e.value);
+    let iter_bucket = List.iter(f);
+    Array.iter(iter_bucket, map.table^);
+};
+
 let find = (map, key) => {
     let (bucket, _index) =  bucket(map, key);
     let element = List.find(element => element.key == key, bucket);
