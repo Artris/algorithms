@@ -25,7 +25,7 @@ let bucket = (map, key) => {
     let {pre_hash, hash, table} = map;
     let table = table^;
     let number_buckets = Array.length(table);
-    let bucket_index = pre_hash(key) |> hash(number_buckets);
+    let bucket_index = key |> pre_hash |> hash(number_buckets);
     let bucket = Array.get(table, bucket_index);
     (bucket, bucket_index)
 };
@@ -48,6 +48,39 @@ let iter = (f, map) => {
     Array.iter(iter_bucket, map.table^);
 };
 
+let expected_num_buckets = map => {
+    let {table, num_bindings} = map;
+    let num_buckets = Array.length(table^);
+    let load = num_bindings / num_buckets;
+    switch load {
+    | l when l > 40 => num_buckets * 2
+    | l when l < 10 && num_buckets > 1 => num_buckets / 2
+    | _ => num_buckets
+    };
+};
+
+let rehash = (map, expected_num_buckets) => {
+    let {pre_hash, hash} = map;
+    let hash = hash(expected_num_buckets);
+    let table = Array.make(expected_num_buckets, []);
+
+    let populate = (key, value) => {
+        let bucket_index = key |> pre_hash |> hash;
+        let bucket = Array.get(table, bucket_index);
+        Array.set(table, bucket_index, [{key, value}, ...bucket]);
+    };
+
+    iter(populate, map);
+}
+
+let maybe_rehash = map => {
+    let num_buckets = Array.length(map.table^);
+    let expected_num_buckets = expected_num_buckets(map);
+    if(num_buckets != expected_num_buckets) {
+        rehash(map, expected_num_buckets)
+    }
+};
+
 let find = (map, key) => {
     let (bucket, _index) =  bucket(map, key);
     let element = List.find(element => element.key == key, bucket);
@@ -57,11 +90,13 @@ let find = (map, key) => {
 let add = (map, key, value) => {
     let (bucket, index) =  bucket(map, key);
     Array.set(map.table^, index, [{key, value}, ...bucket]);
+    maybe_rehash(map);
 };
 
 let remove = (map, key) => {
     let (bucket, index) =  bucket(map, key);
     Array.set(map.table^, index, remove_from_bucket(bucket, key));
+    maybe_rehash(map);
 };
 
 let length = map => map.num_bindings;
