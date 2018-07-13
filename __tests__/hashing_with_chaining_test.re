@@ -41,4 +41,16 @@ describe("Hashing With Chaining", () => {
         expect((e0, e1, e2, e3, e4, e5, e6, e7, e8)) |> toEqual(
             ("0", "1", "2", "3", "4", "5", "6", "7", "8"));
     });
+
+    test("add", () => {
+        let hash = setup();
+
+        add(hash, 3, "33");
+        add(hash, 8, "88");
+
+        let e3 = find(hash, 3);
+        let e8 = find(hash, 8);
+
+        expect((e3, e8)) |> toEqual(("33", "88"));
+    });
 });
