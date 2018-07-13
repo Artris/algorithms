@@ -1,5 +1,9 @@
 type t('a);
 
+exception InvalidArgument(string);
+exception InconsistentState(string);
+exception ArrayIsEmpty;
+
 let create: unit => t('a);
 let length: t('a) => int;
 let get: (t('a), int) => 'a;
