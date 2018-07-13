@@ -9,14 +9,14 @@ type t('a, 'b) = {
     pre_hash: 'a => int,
     hash: int => int => int,
     table: ref(array(bucket('a, 'b))),
-    num_bindings: int
+    num_bindings: ref(int)
 };
 
 let create = (~pre_hash, ~hash) => {
     pre_hash,
     hash,
     table: ref([|[]|]),
-    num_bindings: 0
+    num_bindings: ref(0)
 };
 
 exception Not_found;
@@ -51,7 +51,7 @@ let iter = (f, map) => {
 let expected_num_buckets = map => {
     let {table, num_bindings} = map;
     let num_buckets = Array.length(table^);
-    let load = num_bindings / num_buckets;
+    let load = num_bindings^ / num_buckets;
     switch load {
     | l when l > 40 => num_buckets * 2
     | l when l < 10 && num_buckets > 1 => num_buckets / 2
@@ -90,13 +90,15 @@ let find = (map, key) => {
 let add = (map, key, value) => {
     let (bucket, index) =  bucket(map, key);
     Array.set(map.table^, index, [{key, value}, ...bucket]);
+    map.num_bindings := map.num_bindings^ + 1;
     maybe_rehash(map);
 };
 
 let remove = (map, key) => {
     let (bucket, index) =  bucket(map, key);
     Array.set(map.table^, index, remove_from_bucket(bucket, key));
+    map.num_bindings := map.num_bindings^ - 1;
     maybe_rehash(map);
 };
 
-let length = map => map.num_bindings;
+let length = map => map.num_bindings^;
