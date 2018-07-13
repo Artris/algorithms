@@ -19,7 +19,7 @@ let create = compare => {
 let parent = 
     fun
     | 0 => None
-    | index => Some(index / 2);
+    | index => Some((index - 1) / 2);
 
 let left = index => 2 * index + 1;
 let right = index => 2 * (index + 1);
