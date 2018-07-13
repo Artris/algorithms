@@ -45,7 +45,7 @@ describe("Hashing With Chaining", () => {
         expect(e17) |> toEqual("Hi");
     });
 
-    test("remove", () => {
+    test("remove restores the previous mapping", () => {
         let hash = setup();
 
         add(hash, 17, "Hi");
