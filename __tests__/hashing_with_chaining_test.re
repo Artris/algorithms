@@ -44,4 +44,24 @@ describe("Hashing With Chaining", () => {
 
         expect(e17) |> toEqual("Hi");
     });
+
+    test("remove", () => {
+        let hash = setup();
+
+        add(hash, 17, "Hi");
+        remove(hash, 17);
+        let e17 = find(hash, 17);
+
+        expect(e17) |> toEqual("17");
+    });
+
+    test("remove throws when the key doesn't exists", () => {
+        let hash = setup();
+
+        remove(hash, 17);
+        
+        expect(() => {
+            remove(hash, 17);
+        }) |> toThrowException(Hashing_With_Chaining.Not_found);
+    });
 });
