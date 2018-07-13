@@ -24,4 +24,21 @@ describe("Hashing With Chaining", () => {
         let length = length(hash);
         expect(length) |> toEqual(9);
     });
+
+    test("find", () => {
+        let hash = setup();
+
+        let e0 = find(hash, 0);
+        let e1 = find(hash, 1);
+        let e2 = find(hash, 2);
+        let e3 = find(hash, 3);
+        let e4 = find(hash, 4);
+        let e5 = find(hash, 5);
+        let e6 = find(hash, 6);
+        let e7 = find(hash, 7);
+        let e8 = find(hash, 8);
+
+        expect((e0, e1, e2, e3, e4, e5, e6, e7, e8)) |> toEqual(
+            ("0", "1", "2", "3", "4", "5", "6", "7", "8"));
+    });
 });
