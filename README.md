@@ -10,7 +10,7 @@ Checkout the [contribution guidelines](https://github.com/Artris/algorithms/blob
 
 - [ ] Insertion Sort
 - [ ] Merge Sort
-- [ ] Heaps
+- [x] Heaps
 - [ ] AVL Trees
 - [ ] Counting Sort
 - [ ] Radix Sort
