@@ -47,3 +47,13 @@ let find = (map, key) => {
 
     search(0);
 };
+
+let iter = (f, map) => {
+    let f = 
+        fun
+        | Empty => ()
+        | Deleted => ()
+        | Filled(binding) => f(binding.key, binding.value);
+    
+    Array.iter(f, map.table^);
+};
