@@ -25,3 +25,25 @@ let create = (~pre_hash, ~hash) => {
 exception Not_found;
 
 let length = map => map.num_bindings^;
+
+let find = (map, key) => {
+    let {hash, pre_hash, table} = map;
+    let table = table^;
+    let key = pre_hash(key);
+
+    let size = Array.length(table);
+    let hash = hash(size, key);
+
+    let rec search = iter => {
+        let index = hash(iter);
+        let state = Array.get(table, index);
+        switch state {
+        | Empty => raise(Not_found)
+        | Deleted => search(iter + 1)
+        | Filled(binding) when binding.key == key => binding.value
+        | _ => search(iter + 1)
+        };
+    };
+
+    search(0);
+};
