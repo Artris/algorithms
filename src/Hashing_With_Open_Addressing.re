@@ -114,3 +114,12 @@ let maybe_rehash = map => {
         rehash(map, expected_num_buckets)
     }
 };
+
+let add = (map, key, value) => {
+    let {table, pre_hash, hash} = map;
+    let table = table^;
+    let size = Array.length(table);
+    let index = empty_bucket_index(table, hash(size), pre_hash(key));
+    Array.set(table, index, Filled({key, value}));
+    maybe_rehash(map);
+};
