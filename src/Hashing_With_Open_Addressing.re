@@ -30,10 +30,9 @@ let length = map => map.num_bindings^;
 let find_index = (map, key) => {
     let {hash, pre_hash, table} = map;
     let table = table^;
-    let key = pre_hash(key);
 
     let size = Array.length(table);
-    let hash = hash(size, key);
+    let hash = hash(size, pre_hash(key));
 
     let rec search = iter => {
         if (iter == size) {
