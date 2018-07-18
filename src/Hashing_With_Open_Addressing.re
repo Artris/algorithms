@@ -23,10 +23,11 @@ let create = (~pre_hash, ~hash) => {
 };
 
 exception Not_found;
+exception Inconsistent_state;
 
 let length = map => map.num_bindings^;
 
-let find = (map, key) => {
+let find_index = (map, key) => {
     let {hash, pre_hash, table} = map;
     let table = table^;
     let key = pre_hash(key);
@@ -44,12 +45,21 @@ let find = (map, key) => {
         switch state {
         | Empty => raise(Not_found)
         | Deleted => search(iter + 1)
-        | Filled(binding) when binding.key == key => binding.value
+        | Filled(binding) when binding.key == key => index
         | _ => search(iter + 1)
         };
     };
 
     search(0);
+}
+
+let find = (map, key) => {
+    let index = find_index(map, key);
+    let bucket = Array.get(map.table^, index);
+    switch bucket {
+    | Empty | Deleted => raise(Inconsistent_state)
+    | Filled(binding) => binding.value
+    };
 };
 
 let iter = (f, map) => {
@@ -121,5 +131,11 @@ let add = (map, key, value) => {
     let size = Array.length(table);
     let index = empty_bucket_index(table, hash(size), pre_hash(key));
     Array.set(table, index, Filled({key, value}));
+    maybe_rehash(map);
+};
+
+let remove = (map, key) => {
+    let index = find_index(map, key);
+    Array.set(map.table^, index, Deleted);
     maybe_rehash(map);
 };
