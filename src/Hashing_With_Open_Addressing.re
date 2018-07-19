@@ -36,7 +36,7 @@ let find_index = (map, key) => {
 
     let rec search = iter => {
         if (iter == size) {
-            raise(Not_found) 
+            raise(Not_found)
         };
 
         let index = hash(iter);
@@ -82,9 +82,9 @@ let expected_num_buckets = map => {
     };
 };
 
-let empty_bucket_index = (table, hash, key) => {
+let find_insert_bucket_index = (table, hash, key, pre_hash) => {
     let size = Array.length(table);
-    let hash = hash(key);
+    let hash = hash(pre_hash(key));
 
     let rec search = iter => {
         if (iter == size) {
@@ -95,7 +95,8 @@ let empty_bucket_index = (table, hash, key) => {
         let state = Array.get(table, index);
         switch state {
         | Empty | Deleted => index
-        | Filled(_binding) => search(iter + 1)
+        | Filled(binding) when binding.key == key => index
+        | _ => search(iter + 1)
         };
     };
 
@@ -108,7 +109,7 @@ let rehash = (map, expected_num_buckets) => {
     let table = Array.make(expected_num_buckets, Empty);
 
     let populate = (key, value) => {
-        let bucket_index = empty_bucket_index(table, hash, pre_hash(key));
+        let bucket_index = find_insert_bucket_index(table, hash, key, pre_hash);
         Array.set(table, bucket_index, Filled({key, value}));
     };
 
@@ -125,11 +126,12 @@ let maybe_rehash = map => {
 };
 
 let add = (map, key, value) => {
-    let {table, pre_hash, hash} = map;
+    let {table, hash, pre_hash, num_bindings} = map;
     let table = table^;
     let size = Array.length(table);
-    let index = empty_bucket_index(table, hash(size), pre_hash(key));
+    let index = find_insert_bucket_index(table, hash(size), key, pre_hash);
     Array.set(table, index, Filled({key, value}));
+    num_bindings := num_bindings^ + 1;
     maybe_rehash(map);
 };
 
