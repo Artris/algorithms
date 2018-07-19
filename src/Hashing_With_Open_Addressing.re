@@ -31,17 +31,17 @@ let find_index = (map, key) => {
     let {hash, pre_hash, table} = map;
     let table = table^;
 
-    let size = Array.length(table);
-    let hash = hash(size, pre_hash(key));
+    let num_buckets = Array.length(table);
+    let hash = hash(num_buckets, pre_hash(key));
 
     let rec search = iter => {
-        if (iter == size) {
+        if (iter == num_buckets) {
             raise(Not_found)
         };
 
         let index = hash(iter);
-        let state = Array.get(table, index);
-        switch state {
+        let bucket = Array.get(table, index);
+        switch bucket {
         | Empty => raise(Not_found)
         | Deleted => search(iter + 1)
         | Filled(binding) when binding.key == key => index
@@ -82,18 +82,18 @@ let expected_num_buckets = map => {
     };
 };
 
-let find_insert_bucket_index = (table, hash, key, pre_hash) => {
-    let size = Array.length(table);
+let find_insert_bucket_index = (table, hash, pre_hash, key) => {
+    let num_buckets = Array.length(table);
     let hash = hash(pre_hash(key));
 
     let rec search = iter => {
-        if (iter == size) {
+        if (iter == num_buckets) {
             raise(Not_found) 
         };
 
         let index = hash(iter);
-        let state = Array.get(table, index);
-        switch state {
+        let bucket = Array.get(table, index);
+        switch bucket {
         | Empty | Deleted => index
         | Filled(binding) when binding.key == key => index
         | _ => search(iter + 1)
@@ -109,7 +109,7 @@ let rehash = (map, expected_num_buckets) => {
     let table = Array.make(expected_num_buckets, Empty);
 
     let populate = (key, value) => {
-        let bucket_index = find_insert_bucket_index(table, hash, key, pre_hash);
+        let bucket_index = find_insert_bucket_index(table, hash, pre_hash, key);
         Array.set(table, bucket_index, Filled({key, value}));
     };
 
@@ -128,8 +128,8 @@ let maybe_rehash = map => {
 let add = (map, key, value) => {
     let {table, hash, pre_hash, num_bindings} = map;
     let table = table^;
-    let size = Array.length(table);
-    let index = find_insert_bucket_index(table, hash(size), key, pre_hash);
+    let num_buckets = Array.length(table);
+    let index = find_insert_bucket_index(table, hash(num_buckets), pre_hash, key);
     Array.set(table, index, Filled({key, value}));
     num_bindings := num_bindings^ + 1;
     maybe_rehash(map);
