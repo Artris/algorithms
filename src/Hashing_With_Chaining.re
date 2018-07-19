@@ -71,6 +71,7 @@ let rehash = (map, expected_num_buckets) => {
     };
 
     iter(populate, map);
+    map.table := table;
 }
 
 let maybe_rehash = map => {
