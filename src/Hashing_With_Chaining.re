@@ -1,9 +1,9 @@
-type element('a, 'b) = {
+type binding('a, 'b) = {
     key: 'a,
     value: 'b
 };
 
-type bucket('a, 'b) = list(element('a, 'b));
+type bucket('a, 'b) = list(binding('a, 'b));
 
 type t('a, 'b) = {
     pre_hash: 'a => int,
@@ -87,8 +87,8 @@ let maybe_rehash = map => {
 
 let find = (map, key) => {
     let (bucket, _index) =  bucket(map, key);
-    let element = List.find(element => element.key == key, bucket);
-    element.value;
+    let binding = List.find(binding => binding.key == key, bucket);
+    binding.value;
 };
 
 let add = (map, key, value) => {
