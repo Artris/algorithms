@@ -12,14 +12,16 @@ type t('a, 'b) = {
     pre_hash: 'a => int,
     hash: (int, int, int) => int,
     table: ref(array(bucket('a, 'b))),
-    num_bindings: ref(int)
+    num_bindings: ref(int),
+    load: float
 };
 
 let create = (~pre_hash, ~hash) => {
     pre_hash,
     hash,
     table: ref([|Empty|]),
-    num_bindings: ref(0)
+    num_bindings: ref(0),
+    load: 0.25
 };
 
 exception Not_found;
@@ -76,8 +78,8 @@ let expected_num_buckets = map => {
     let num_buckets = Array.length(table^);
     let load = float_of_int(num_bindings^) /. float_of_int(num_buckets);
     switch load {
-    | l when l > (1. /. 2.) => num_buckets * 2
-    | l when l < (1. /. 8.) && num_buckets > 1 => num_buckets / 2
+    | l when l > (map.load *. 2.) => num_buckets * 2
+    | l when l < (map.load /. 2.) && num_buckets > 1 => num_buckets / 2
     | _ => num_buckets
     };
 };
