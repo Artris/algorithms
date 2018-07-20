@@ -44,7 +44,10 @@ let remove_from_bucket = (bucket, key) => {
 
 let iter = (f, map) => {
     let f = e => f(e.key, e.value);
-    let iter_bucket = List.iter(f);
+    let iter_bucket = bucket => {
+        let bucket = List.rev(bucket);
+        List.iter(f, bucket);
+    };
     Array.iter(iter_bucket, map.table^);
 };
 
