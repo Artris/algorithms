@@ -16,10 +16,10 @@ type t('a, 'b) = {
     load: float
 };
 
-let create = (~pre_hash, ~hash) => {
+let create = (~init_size=1, ~pre_hash, ~hash, ()) => {
     pre_hash,
     hash,
-    table: ref([|Empty|]),
+    table: ref(Array.make(init_size, Empty)),
     num_bindings: ref(0),
     load: 0.25
 };
@@ -84,47 +84,47 @@ let expected_num_slots = map => {
     };
 };
 
-let insert = (map, key, value) => {
-    let {hash, pre_hash, table, num_bindings} = map;
+let insert = ({hash, pre_hash, table, num_bindings}) => {
     let table = table^;
-
     let num_slots = Array.length(table);
-    let hash = hash(num_slots, pre_hash(key));
+    let hash = hash(num_slots);
 
-    let rec aux = iter => {
-        if (iter == num_slots) {
-            raise(Not_found) 
+    (key, value) => {
+        let hash = hash(pre_hash(key));
+
+        let rec aux = iter => {
+            if (iter == num_slots) {
+                raise(Not_found) 
+            };
+    
+            let index = hash(iter);
+            let slot = Array.get(table, index);
+            switch slot {
+            | Empty | Deleted => {
+                Array.set(table, index, Filled({key, value}));
+                num_bindings := num_bindings^ + 1;
+            }
+            | Filled(binding) when binding.key == key => {
+                Array.set(table, index, Filled({key, value}));
+            }
+            | _ => aux(iter + 1)
+            };
         };
 
-        let index = hash(iter);
-        let slot = Array.get(table, index);
-        switch slot {
-        | Empty | Deleted => {
-            Array.set(table, index, Filled({key, value}));
-            num_bindings := num_bindings^ + 1;
-        }
-        | Filled(binding) when binding.key == key => {
-            Array.set(table, index, Filled({key, value}));
-        }
-        | _ => aux(iter + 1)
-        };
-    };
-
-    aux(0);
+        aux(0);
+    }
 };
 
 let rehash = (map, expected_num_slots) => {
     let {pre_hash, hash} = map;
-    let table = Array.make(expected_num_slots, Empty);
-    let temp_map = {
-        pre_hash,
-        hash,
-        table: ref(table),
-        num_bindings: ref(0),
-        load: 0.25
-    }    
+    let temp_map = create(
+        ~pre_hash=pre_hash,
+        ~hash=hash,
+        ~init_size=expected_num_slots,
+        ()
+    );
 
-    let populate = (key, value) => insert(temp_map, key, value);
+    let populate = insert(temp_map);
     iter(populate, map);
 
     map.table := temp_map.table^;
@@ -139,7 +139,7 @@ let maybe_rehash = map => {
 };
 
 let add = (map, key, value) => {
-    insert(map, key, value);
+    insert(map)(key, value);
     maybe_rehash(map);
 };
 

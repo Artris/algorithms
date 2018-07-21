@@ -14,7 +14,7 @@ describe("Hashing With Chaining", () => {
     let keys = generate_keys(num_keys);
 
     let setup = () => {
-        let hash = create(~pre_hash = n => n, ~hash = (num_buckets, pre_hash, iter) => ((pre_hash + iter) mod num_buckets));
+        let hash = create(~pre_hash = n => n, ~hash = (num_buckets, pre_hash, iter) => ((pre_hash + iter) mod num_buckets), ());
         List.iter(key => add(hash, key, string_of_int(key)), keys);
         hash
     };
