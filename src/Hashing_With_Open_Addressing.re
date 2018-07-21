@@ -84,11 +84,14 @@ let expected_num_slots = map => {
     };
 };
 
-let find_insert_slot_index = (table, hash, pre_hash, key) => {
-    let num_slots = Array.length(table);
-    let hash = hash(pre_hash(key));
+let insert = (map, key, value) => {
+    let {hash, pre_hash, table, num_bindings} = map;
+    let table = table^;
 
-    let rec search = iter => {
+    let num_slots = Array.length(table);
+    let hash = hash(num_slots, pre_hash(key));
+
+    let rec aux = iter => {
         if (iter == num_slots) {
             raise(Not_found) 
         };
@@ -96,27 +99,35 @@ let find_insert_slot_index = (table, hash, pre_hash, key) => {
         let index = hash(iter);
         let slot = Array.get(table, index);
         switch slot {
-        | Empty | Deleted => index
-        | Filled(binding) when binding.key == key => index
-        | _ => search(iter + 1)
+        | Empty | Deleted => {
+            Array.set(table, index, Filled({key, value}));
+            num_bindings := num_bindings^ + 1;
+        }
+        | Filled(binding) when binding.key == key => {
+            Array.set(table, index, Filled({key, value}));
+        }
+        | _ => aux(iter + 1)
         };
     };
 
-    search(0);
+    aux(0);
 };
 
 let rehash = (map, expected_num_slots) => {
     let {pre_hash, hash} = map;
-    let hash = hash(expected_num_slots);
     let table = Array.make(expected_num_slots, Empty);
+    let temp_map = {
+        pre_hash,
+        hash,
+        table: ref(table),
+        num_bindings: ref(0),
+        load: 0.25
+    }    
 
-    let populate = (key, value) => {
-        let bucket_index = find_insert_slot_index(table, hash, pre_hash, key);
-        Array.set(table, bucket_index, Filled({key, value}));
-    };
-
+    let populate = (key, value) => insert(temp_map, key, value);
     iter(populate, map);
-    map.table := table;
+
+    map.table := temp_map.table^;
 };
 
 let maybe_rehash = map => {
@@ -128,17 +139,13 @@ let maybe_rehash = map => {
 };
 
 let add = (map, key, value) => {
-    let {table, hash, pre_hash, num_bindings} = map;
-    let table = table^;
-    let num_slots = Array.length(table);
-    let index = find_insert_slot_index(table, hash(num_slots), pre_hash, key);
-    Array.set(table, index, Filled({key, value}));
-    num_bindings := num_bindings^ + 1;
+    insert(map, key, value);
     maybe_rehash(map);
 };
 
 let remove = (map, key) => {
     let index = find_index(map, key);
     Array.set(map.table^, index, Deleted);
+    map.num_bindings := map.num_bindings^ - 1;
     maybe_rehash(map);
 };
