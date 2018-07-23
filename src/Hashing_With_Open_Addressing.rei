@@ -7,7 +7,7 @@ let create: (
     unit
 ) => t('a, 'b);
 
-exception Not_found;
+exception Key_not_found;
 exception Inconsistent_state;
 
 let find: (t('a, 'b), 'a) => 'b;

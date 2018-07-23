@@ -52,7 +52,7 @@ describe("Hashing With Chaining", () => {
 
         expect(() => {
             find(hash, 17);
-        }) |> toThrowException(Hashing_With_Open_Addressing.Not_found);
+        }) |> toThrowException(Key_not_found);
     });
 
     test("remove throws when the key doesn't exists", () => {
@@ -62,6 +62,6 @@ describe("Hashing With Chaining", () => {
         
         expect(() => {
             remove(hash, 17);
-        }) |> toThrowException(Hashing_With_Open_Addressing.Not_found);
+        }) |> toThrowException(Key_not_found);
     });
 });

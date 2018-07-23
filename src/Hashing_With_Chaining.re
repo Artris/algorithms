@@ -21,7 +21,7 @@ let create = (~pre_hash, ~hash) => {
     load: 16
 };
 
-exception Not_found;
+exception Key_not_found;
 
 let bucket = (map, key) => {
     let {pre_hash, hash, table} = map;
@@ -35,7 +35,7 @@ let bucket = (map, key) => {
 let remove_from_bucket = (bucket, key) => {
     let rec helper = (prev, next) => {
         switch next {
-        | [] => raise(Not_found)
+        | [] => raise(Key_not_found)
         | [e, ...rest] when e.key == key => List.rev_append(prev, rest);
         | [e, ...rest] => helper([e, ...prev], rest);
         };

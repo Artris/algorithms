@@ -62,7 +62,7 @@ describe("Hashing With Chaining", () => {
         
         expect(() => {
             remove(hash, 17);
-        }) |> toThrowException(Hashing_With_Chaining.Not_found);
+        }) |> toThrowException(Key_not_found);
     });
 
     test("hash table maintains its complete history", () => {

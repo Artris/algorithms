@@ -24,7 +24,7 @@ let create = (~init_size=1, ~pre_hash, ~hash, ()) => {
     load: 0.25
 };
 
-exception Not_found;
+exception Key_not_found;
 exception Inconsistent_state;
 
 let length = map => map.num_bindings^;
@@ -38,13 +38,13 @@ let find_index = (map, key) => {
 
     let rec search = iter => {
         if (iter == num_slots) {
-            raise(Not_found)
+            raise(Key_not_found)
         };
 
         let index = hash(iter);
         let slot = Array.get(table, index);
         switch slot {
-        | Empty => raise(Not_found)
+        | Empty => raise(Key_not_found)
         | Deleted => search(iter + 1)
         | Filled(binding) when binding.key == key => index
         | _ => search(iter + 1)
@@ -94,7 +94,7 @@ let insert = ({hash, pre_hash, table, num_bindings}) => {
 
         let rec aux = iter => {
             if (iter == num_slots) {
-                raise(Not_found) 
+                raise(Key_not_found) 
             };
     
             let index = hash(iter);
