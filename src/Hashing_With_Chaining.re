@@ -1,25 +1,27 @@
-type element('a, 'b) = {
+type binding('a, 'b) = {
     key: 'a,
     value: 'b
 };
 
-type bucket('a, 'b) = list(element('a, 'b));
+type bucket('a, 'b) = list(binding('a, 'b));
 
 type t('a, 'b) = {
     pre_hash: 'a => int,
     hash: int => int => int,
     table: ref(array(bucket('a, 'b))),
-    num_bindings: ref(int)
+    num_bindings: ref(int),
+    load: int
 };
 
 let create = (~pre_hash, ~hash) => {
     pre_hash,
     hash,
     table: ref([|[]|]),
-    num_bindings: ref(0)
+    num_bindings: ref(0),
+    load: 16
 };
 
-exception Not_found;
+exception Key_not_found;
 
 let bucket = (map, key) => {
     let {pre_hash, hash, table} = map;
@@ -33,7 +35,7 @@ let bucket = (map, key) => {
 let remove_from_bucket = (bucket, key) => {
     let rec helper = (prev, next) => {
         switch next {
-        | [] => raise(Not_found)
+        | [] => raise(Key_not_found)
         | [e, ...rest] when e.key == key => List.rev_append(prev, rest);
         | [e, ...rest] => helper([e, ...prev], rest);
         };
@@ -44,7 +46,10 @@ let remove_from_bucket = (bucket, key) => {
 
 let iter = (f, map) => {
     let f = e => f(e.key, e.value);
-    let iter_bucket = List.iter(f);
+    let iter_bucket = bucket => {
+        let bucket = List.rev(bucket);
+        List.iter(f, bucket);
+    };
     Array.iter(iter_bucket, map.table^);
 };
 
@@ -53,8 +58,8 @@ let expected_num_buckets = map => {
     let num_buckets = Array.length(table^);
     let load = num_bindings^ / num_buckets;
     switch load {
-    | l when l > 40 => num_buckets * 2
-    | l when l < 10 && num_buckets > 1 => num_buckets / 2
+    | l when l > map.load * 2 => num_buckets * 2
+    | l when l < map.load / 2 && num_buckets > 1 => num_buckets / 2
     | _ => num_buckets
     };
 };
@@ -84,8 +89,8 @@ let maybe_rehash = map => {
 
 let find = (map, key) => {
     let (bucket, _index) =  bucket(map, key);
-    let element = List.find(element => element.key == key, bucket);
-    element.value;
+    let binding = List.find(binding => binding.key == key, bucket);
+    binding.value;
 };
 
 let add = (map, key, value) => {

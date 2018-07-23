@@ -4,14 +4,14 @@ open Expect;
 describe("Hashing With Chaining", () => {
     open Hashing_With_Chaining;
 
-    let rec generate_keys =
+    let rec range_upto =
         fun
         | 0 => []
-        | n => [n, ...generate_keys(n - 1)];
+        | n => [n, ...range_upto(n - 1)];
     
     let num_keys = 400;
 
-    let keys = generate_keys(num_keys);
+    let keys = range_upto(num_keys);
 
     let setup = () => {
         let hash = create(~pre_hash = n => n, ~hash = m => n => n mod m);
@@ -62,6 +62,22 @@ describe("Hashing With Chaining", () => {
         
         expect(() => {
             remove(hash, 17);
-        }) |> toThrowException(Hashing_With_Chaining.Not_found);
+        }) |> toThrowException(Key_not_found);
+    });
+
+    test("hash table maintains its complete history", () => {
+        let key = 17;
+        let values = range_upto(400);
+        let hash = create(~pre_hash = n => n, ~hash = m => n => n mod m);
+        List.iter(value => add(hash, key, value), values);
+
+        let result = List.map(_ => {
+            let value = find(hash, key);
+            remove(hash, key);
+            value;
+        }, values);
+        let expected = List.rev(values);
+        
+        expect(result) |> toEqual(expected);
     });
 });

@@ -14,7 +14,7 @@ describe("Hashing With Chaining", () => {
     let keys = generate_keys(num_keys);
 
     let setup = () => {
-        let hash = create(~pre_hash = n => n, ~hash = (num_buckets, pre_hash, iter) => ((pre_hash + iter) mod num_buckets));
+        let hash = create(~pre_hash = n => n, ~hash = (num_buckets, pre_hash, iter) => ((pre_hash + iter) mod num_buckets), ());
         List.iter(key => add(hash, key, string_of_int(key)), keys);
         hash
     };
@@ -52,7 +52,7 @@ describe("Hashing With Chaining", () => {
 
         expect(() => {
             find(hash, 17);
-        }) |> toThrowException(Hashing_With_Open_Addressing.Not_found);
+        }) |> toThrowException(Key_not_found);
     });
 
     test("remove throws when the key doesn't exists", () => {
@@ -62,6 +62,6 @@ describe("Hashing With Chaining", () => {
         
         expect(() => {
             remove(hash, 17);
-        }) |> toThrowException(Hashing_With_Open_Addressing.Not_found);
+        }) |> toThrowException(Key_not_found);
     });
 });

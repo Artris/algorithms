@@ -5,7 +5,7 @@ let create: (
     ~hash: int => int => int
 ) => t('a, 'b);
 
-exception Not_found;
+exception Key_not_found;
 
 let find: (t('a, 'b), 'a) => 'b;
 let add: (t('a, 'b), 'a, 'b) => unit;
