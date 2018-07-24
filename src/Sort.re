@@ -1,11 +1,12 @@
 module type Sort {
-    let sort: array('a) => array('a);
+    let sort: (('a, 'a) => bool, array('a)) => array('a);
 };
 
 exception Invalid_state;
 
 module Merge: Sort {
-    let merge = (a, b) => {
+    let merge = (compare, a, b) => {
+        let (<<) = compare;
         let a_len = Array.length(a);
         let b_len = Array.length(b);
         let res = Array.make(a_len + b_len, None);
@@ -23,7 +24,7 @@ module Merge: Sort {
                 Array.set(res, a_ind + b_ind, b');
                 aux(a_ind, b_ind + 1);
             }
-            | (Some(a_val), Some(b_val)) when a_val < b_val => {
+            | (Some(a_val), Some(b_val)) when a_val << b_val => {
                 Array.set(res, a_ind + b_ind, a');
                 aux(a_ind + 1, b_ind);
             }
@@ -42,18 +43,21 @@ module Merge: Sort {
         });
     };
     
-    let rec sort =
-        fun
-        | [||] => [||]
-        | [|head|] => [|head|]
-        | arr => {
-            let len = Array.length(arr);
-            let mid = len / 2;
-            let a = Array.sub(arr, 0, mid);
-            let b = Array.sub(arr, mid, len - mid);
-            let a' = sort(a);
-            let b' = sort(b);
-            merge(a', b');
-        };
-    
+    let sort = (compare, array) => {
+        let rec aux = 
+            fun
+            | [||] => [||]
+            | [|head|] => [|head|]
+            | arr => {
+                let len = Array.length(arr);
+                let mid = len / 2;
+                let a = Array.sub(arr, 0, mid);
+                let b = Array.sub(arr, mid, len - mid);
+                let a' = aux(a);
+                let b' = aux(b);
+                merge(compare, a', b');
+            };
+
+        aux(array);
+    };
 };
