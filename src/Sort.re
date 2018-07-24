@@ -1,38 +1,45 @@
 module type Sort {
-    let sort: array(int) => array(int);
+    let sort: array('a) => array('a);
 };
+
+exception Invalid_state;
 
 module Merge: Sort {
     let merge = (a, b) => {
         let a_len = Array.length(a);
         let b_len = Array.length(b);
-        let res = Array.make(a_len + b_len, 0);
+        let res = Array.make(a_len + b_len, None);
         
         let rec aux = (a_ind, b_ind) => {
             let a' = a_ind < a_len ? Some(Array.get(a, a_ind)) : None;
             let b' = b_ind < b_len ? Some(Array.get(b, b_ind)) : None;
             switch (a', b') {
             | (None, None) => res
-            | (Some(a_val), None) => {
-                Array.set(res, a_ind + b_ind, a_val);
+            | (Some(_a_val), None) => {
+                Array.set(res, a_ind + b_ind, a');
                 aux(a_ind + 1, b_ind);
             }
-            | (None, Some(b_val)) => {
-                Array.set(res, a_ind + b_ind, b_val);
+            | (None, Some(_b_val)) => {
+                Array.set(res, a_ind + b_ind, b');
                 aux(a_ind, b_ind + 1);
             }
-            | (Some(val_a), Some(val_b)) when val_a < val_b => {
-                Array.set(res, a_ind + b_ind, val_a);
+            | (Some(a_val), Some(b_val)) when a_val < b_val => {
+                Array.set(res, a_ind + b_ind, a');
                 aux(a_ind + 1, b_ind);
             }
-            | (_, Some(val_b)) => {
-                Array.set(res, a_ind + b_ind, val_b);
+            | (_, Some(_b_val)) => {
+                Array.set(res, a_ind + b_ind, b');
                 aux(a_ind, b_ind + 1);
             }
             };
         };
     
-        aux(0, 0);
+        aux(0, 0) |> Array.map(e => {
+            switch e {
+            | Some(v) => v
+            | None => raise(Invalid_state)
+            };
+        });
     };
     
     let rec sort =
