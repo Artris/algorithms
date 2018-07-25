@@ -8,7 +8,7 @@ Checkout the [contribution guidelines](https://github.com/Artris/algorithms/blob
 
 ## 6006 Algorithms and Data Structures
 
-- [ ] Insertion Sort
+- [x] Insertion Sort
 - [x] Merge Sort
 - [x] Heaps
 - [ ] AVL Trees
