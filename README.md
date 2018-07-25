@@ -9,15 +9,15 @@ Checkout the [contribution guidelines](https://github.com/Artris/algorithms/blob
 ## 6006 Algorithms and Data Structures
 
 - [ ] Insertion Sort
-- [ ] Merge Sort
+- [x] Merge Sort
 - [x] Heaps
 - [ ] AVL Trees
 - [ ] Counting Sort
 - [ ] Radix Sort
-- [ ] Hashing with Chaining
+- [x] Hashing with Chaining
 - [x] Table Doubling
 - [ ] Karp-Rabin
-- [ ] Hashing with Open Addressing
+- [x] Hashing with Open Addressing
 - [ ] Karatsuba Multiplication
 - [ ] Breadth-First Search (BFS)
 - [ ] Depth-First Search (DFS)
