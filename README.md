@@ -12,8 +12,8 @@ Checkout the [contribution guidelines](https://github.com/Artris/algorithms/blob
 - [x] Merge Sort
 - [x] Heaps
 - [ ] AVL Trees
-- [ ] Counting Sort
-- [ ] Radix Sort
+- [x] Counting Sort
+- [x] Radix Sort
 - [x] Hashing with Chaining
 - [x] Table Doubling
 - [ ] Karp-Rabin
