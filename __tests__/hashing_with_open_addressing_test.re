@@ -1,8 +1,9 @@
 open Jest;
 open Expect;
+open Hashing;
 
-describe("Hashing With Chaining", () => {
-    open Hashing_With_Open_Addressing;
+describe("Hashing With Open Addressing", () => {
+    open HashtblWithOpenAddressing;
 
     let rec generate_keys =
         fun

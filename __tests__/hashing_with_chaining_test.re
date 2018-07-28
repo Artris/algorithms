@@ -1,8 +1,9 @@
 open Jest;
 open Expect;
+open Hashing;
 
 describe("Hashing With Chaining", () => {
-    open Hashing_With_Chaining;
+    open HashtblWithChaining;
 
     let rec range_upto =
         fun
