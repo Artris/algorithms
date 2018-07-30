@@ -1,6 +1,6 @@
 type node = {
     id: string,
-    mutable neighbours: list(node),
+    neighbours: list(node),
 };
 
 type pair = (string, list(string));
