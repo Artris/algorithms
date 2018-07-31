@@ -2,7 +2,7 @@ open Jest;
 open Expect;
 
 describe("Hashing With Open Addressing", () => {
-    open HashtblWithOpenAddressing;
+    open Hashtbl_With_Open_Addressing;
 
     let rec generate_keys =
         fun
