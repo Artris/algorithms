@@ -1,9 +1,8 @@
 open Jest;
 open Expect;
-open Basic;
 
 describe("Dynamic Array", () => {
-    open Array;
+    open DynamicArray;
 
     let num_elements = 400;
 

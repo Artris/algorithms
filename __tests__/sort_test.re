@@ -1,6 +1,5 @@
 open Jest;
 open Expect;
-open Sort;
 
 describe("Merge Sort", () => {
     test("sort", () => {
