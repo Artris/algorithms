@@ -1,6 +1,5 @@
 open Jest;
 open Expect;
-open Basic;
 
 describe("Heap", () => {
     open Heap;

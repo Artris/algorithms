@@ -1,6 +1,5 @@
 open Jest;
 open Expect;
-open Hashing;
 
 describe("Hashing With Chaining", () => {
     open HashtblWithChaining;

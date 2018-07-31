@@ -1,4 +1,4 @@
-module Array = Basic_DynamicArray;
+module Array = DynamicArray;
 
 type heapElement('a, 'b) = {
     key: 'a,
