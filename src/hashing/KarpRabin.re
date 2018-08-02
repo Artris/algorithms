@@ -13,7 +13,7 @@ module type S = {
     let compare: (t, t) => bool;
 };
 
-module Rolling_Hash = (Sym: AlphabetType): (S with type sym := Sym.t) => {
+module RollingHash = (Sym: AlphabetType): (S with type sym := Sym.t) => {
     type t = {
         u: ref(int),
         d: ref(int),
@@ -56,8 +56,8 @@ module AlphaNumeric = {
     let ord = Char.code;
 };
 
-module Karp_Rabin = {
-    module CRH = Rolling_Hash(AlphaNumeric);
+module KarpRabin = {
+    module CRH = RollingHash(AlphaNumeric);
 
     let find = (s, e, f) => {
         let rec aux = i => {
