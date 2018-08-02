@@ -16,7 +16,7 @@ Checkout the [contribution guidelines](https://github.com/Artris/algorithms/blob
 - [x] Radix Sort
 - [x] Hashing with Chaining
 - [x] Table Doubling
-- [ ] Karp-Rabin
+- [x] Karp-Rabin
 - [x] Hashing with Open Addressing
 - [ ] Karatsuba Multiplication
 - [ ] Breadth-First Search (BFS)
