@@ -23,7 +23,7 @@ module Make = (Sym: AlphabetType): (S with type sym := Sym.t) => {
     let pow = (a, n, m) => {
         let rec aux = (n, acc) => {
             switch n {
-            | 0 => 1
+            | 0 => acc
             | _ => aux(n - 1, (acc * a) mod m)
             };
         };
@@ -43,6 +43,7 @@ module Make = (Sym: AlphabetType): (S with type sym := Sym.t) => {
     }
 
     let skip = ({u, d, p}, c) => {
+        let (mod) = (a, b) => ((a mod b) + b) mod b;
         u := (u^ - Sym.ord(c) * pow(Sym.size, d^ - 1, p)) mod p;
         d := d^ - 1;
     };

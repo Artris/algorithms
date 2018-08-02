@@ -39,6 +39,10 @@ let search = (pattern, text) => {
             CRH.compare(rt, rp) && pattern == String.sub(text, ind - pattern_length + 1, pattern_length);
         };
 
-        find(pattern_length, String.length(text) - pattern_length, f);
+        let index = find(pattern_length, String.length(text) - pattern_length, f);
+        switch index {
+        | Some(index) => Some(index - pattern_length + 1)
+        | None => None
+        };
     };
 };
