@@ -2,76 +2,103 @@ open Jest;
 open Expect;
 
 describe("Breadth First Search", () => {
-    open Breadth_First_Search;
+    open BreadthFirstSearch;
 
     test("single node", () => {
 
-        let adj_list = [("node_1", [])];
+        let adj_list = [{id: "A", neighbours: []}];
 
-        let expected = ("node_1", 0);
-        let result_tbl = breadthFirstSearch(adj_list, "node_1");
-        let result = ("node_1", Hashtbl.find(result_tbl, "node_1"));
+        let expected_level = Some(0);
+        let expected_parent = None;
 
-        expect(result) |> toEqual(expected);
+        let {level, parent} = search(adj_list, "A");
+        let level = Hashtbl.find(level, "A");
+        let parent = Hashtbl.find(parent, "A");
+
+        expect((level, parent)) |> toEqual((expected_level, expected_parent));
     });
 
     test("simple cycle", () => {
 
         let adj_list = [
-            ("A", ["B", "D"]), 
-            ("B", ["A", "C"]), 
-            ("C", ["B", "D"]), 
-            ("D", ["A", "C"])];
+            {id: "A", neighbours: ["B", "D"]},
+            {id: "B", neighbours: ["A", "C"]}, 
+            {id: "C", neighbours: ["B", "D"]}, 
+            {id: "D", neighbours: ["A", "C"]}];
 
-        let expected = (0, 1, 2, 1);
+        let expected_levels = (Some(0), Some(1), Some(2), Some(1));
+        let expected_parents = (None, Some("A"), Some("B"), Some("A"));
 
-        let result_tbl = breadthFirstSearch(adj_list, "A");
+        let {level, parent} = search(adj_list, "A");
 
-        let a = Hashtbl.find(result_tbl, "A");
-        let b = Hashtbl.find(result_tbl, "B");
-        let c = Hashtbl.find(result_tbl, "C");
-        let d = Hashtbl.find(result_tbl, "D");
+        let levels = (
+            Hashtbl.find(level, "A"),
+            Hashtbl.find(level, "B"),
+            Hashtbl.find(level, "C"), 
+            Hashtbl.find(level, "D"));
+        
+        let parents = (
+            Hashtbl.find(parent, "A"),
+            Hashtbl.find(parent, "B"),
+            Hashtbl.find(parent, "C"), 
+            Hashtbl.find(parent, "D"));
 
-        expect((a, b, c, d)) |> toEqual(expected);
+            expect((levels, parents)) |> toEqual((expected_levels, expected_parents));
     });
     
     test("complete graph", () => {
 
         let adj_list = [
-            ("A", ["B", "C", "D"]), 
-            ("B", ["A", "C", "D"]), 
-            ("C", ["A", "B", "D"]), 
-            ("D", ["A", "B", "C"])];
+            {id: "A", neighbours: ["B", "C", "D"]},
+            {id: "B", neighbours: ["A", "C", "D"]}, 
+            {id: "C", neighbours: ["A", "B", "D"]}, 
+            {id: "D", neighbours: ["A", "B", "C"]}];
 
-        let expected = (0, 1, 1, 1);
+        let expected_levels = (Some(0), Some(1), Some(1), Some(1));
+        let expected_parents = (None, Some("A"), Some("A"), Some("A"));
 
-        let result_tbl = breadthFirstSearch(adj_list, "A");
+        let {level, parent} = search(adj_list, "A");
 
-        let a = Hashtbl.find(result_tbl, "A");
-        let b = Hashtbl.find(result_tbl, "B");
-        let c = Hashtbl.find(result_tbl, "C");
-        let d = Hashtbl.find(result_tbl, "D");
+        let levels = (
+            Hashtbl.find(level, "A"),
+            Hashtbl.find(level, "B"),
+            Hashtbl.find(level, "C"), 
+            Hashtbl.find(level, "D"));
+        
+        let parents = (
+            Hashtbl.find(parent, "A"),
+            Hashtbl.find(parent, "B"),
+            Hashtbl.find(parent, "C"), 
+            Hashtbl.find(parent, "D"));
 
-        expect((a, b, c, d)) |> toEqual(expected);
+            expect((levels, parents)) |> toEqual((expected_levels, expected_parents));
     });
 
     test("forest", () => {
 
         let adj_list = [
-            ("A", ["B"]), 
-            ("B", ["A"]), 
-            ("C", ["D"]), 
-            ("D", ["C"])];
+            {id: "A", neighbours: ["B"]},
+            {id: "B", neighbours: ["A"]}, 
+            {id: "C", neighbours: ["D"]}, 
+            {id: "D", neighbours: ["C"]}];
 
-        let expected = (0, 1, -1, -1);
+        let expected_levels = (Some(0), Some(1), None, None);
+        let expected_parents = (None, Some("A"), None, None);
 
-        let result_tbl = breadthFirstSearch(adj_list, "A");
+        let {level, parent} = search(adj_list, "A");
 
-        let a = Hashtbl.find(result_tbl, "A");
-        let b = Hashtbl.find(result_tbl, "B");
-        let c = Hashtbl.find(result_tbl, "C");
-        let d = Hashtbl.find(result_tbl, "D");
+        let levels = (
+            Hashtbl.find(level, "A"),
+            Hashtbl.find(level, "B"),
+            Hashtbl.find(level, "C"), 
+            Hashtbl.find(level, "D"));
+        
+        let parents = (
+            Hashtbl.find(parent, "A"),
+            Hashtbl.find(parent, "B"),
+            Hashtbl.find(parent, "C"), 
+            Hashtbl.find(parent, "D"));
 
-        expect((a, b, c, d)) |> toEqual(expected);
+        expect((levels, parents)) |> toEqual((expected_levels, expected_parents));
     });
 });
