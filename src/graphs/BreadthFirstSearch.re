@@ -3,12 +3,14 @@ type node = {
     neighbours: list(string),
 };
 
-type returnResult = {
+type directedGraph = list(node);
+
+type resultType = {
     level: Hashtbl.t(string, option(int)),
     parent: Hashtbl.t(string, option(string))
 };
 
-exception NodeNotExist(string);
+exception Not_found(string);
 
 let parseAdjList = adj_list => {
     let adj_tbl = Hashtbl.create(List.length(adj_list));
@@ -20,7 +22,7 @@ let parseAdjList = adj_list => {
     let validateNeighbours = node => {
         List.iter(neighbour => {
             if (!Hashtbl.mem(adj_tbl, neighbour)) {
-                raise(NodeNotExist(neighbour));
+                raise(Not_found(neighbour));
             }
         }, node.neighbours);
     };
@@ -45,20 +47,25 @@ let visit = (node_id, ~adj_tbl, ~level, ~parent, ~current_level) => {
     }
 };
 
-let rec traverse = (frontier, adj_tbl, level, parent, current_level) => {
+let rec traverse = (~frontier, ~adj_tbl, ~level, ~parent, ~current_level) => {
     let updateFrontier = (_, node_id) => {
-        let visit = visit(
-            ~adj_tbl = adj_tbl, 
-            ~level = level,
-            ~parent = parent,
-            ~current_level = current_level);
+        let visit=visit(
+            ~adj_tbl=adj_tbl, 
+            ~level=level,
+            ~parent=parent,
+            ~current_level=current_level);
         visit(node_id);
     };
 
     let frontier_empty = List.length(frontier) == 0;
     if (!frontier_empty) {
         let frontier = List.fold_left(updateFrontier, [], frontier);
-        traverse(frontier, adj_tbl, level, parent, current_level + 1);
+        traverse(
+            ~frontier=frontier, 
+            ~adj_tbl=adj_tbl, 
+            ~level=level, 
+            ~parent=parent, 
+            ~current_level=current_level + 1);
     }
 };
 
@@ -71,14 +78,19 @@ let markNodeIfUnvisited = (node_id, _, ~level, ~parent) => {
 
 let search = (adj_list, root_id) => {
     let num_nodes = List.length(adj_list);
-    let level: Hashtbl.t(string, option(int)) = Hashtbl.create(num_nodes);
-    let parent: Hashtbl.t(string, option(string)) = Hashtbl.create(num_nodes);
+    let level = Hashtbl.create(num_nodes);
+    let parent = Hashtbl.create(num_nodes);
 
     Hashtbl.add(parent, root_id, None);
     let adj_tbl = parseAdjList(adj_list);
-    traverse([root_id], adj_tbl, level, parent, 0);
+    traverse(
+        ~frontier=[root_id], 
+        ~adj_tbl=adj_tbl, 
+        ~level=level, 
+        ~parent=parent, 
+        ~current_level=0);
     
-    let markNodeIfUnvisited = markNodeIfUnvisited(~level = level, ~parent = parent);
+    let markNodeIfUnvisited = markNodeIfUnvisited(~level=level, ~parent=parent);
     Hashtbl.iter(markNodeIfUnvisited, adj_tbl);
     {level: level, parent: parent};
 };
