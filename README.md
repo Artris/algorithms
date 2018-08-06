@@ -19,7 +19,7 @@ Checkout the [contribution guidelines](https://github.com/Artris/algorithms/blob
 - [ ] Karp-Rabin
 - [x] Hashing with Open Addressing
 - [ ] Karatsuba Multiplication
-- [ ] Breadth-First Search (BFS)
+- [x] Breadth-First Search (BFS)
 - [ ] Depth-First Search (DFS)
 - [ ] Topological Sort
 - [ ] Dijkstra
