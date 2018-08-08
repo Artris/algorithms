@@ -40,7 +40,6 @@ let rec visit = (~node_id, ~adj_tbl, ~level, ~parent, ~current_level) => {
                 Hashtbl.add(parent, neighbour_id, Some(node_id));
             }
         };
-        /* List.iter(markParent, neighbours); */
         let markParentAndVisit = neighbour_id =>  {
             markParent(neighbour_id);
             visit(
@@ -50,6 +49,7 @@ let rec visit = (~node_id, ~adj_tbl, ~level, ~parent, ~current_level) => {
             ~parent=parent,
             ~current_level=current_level + 1);
         };
+
         List.iter(markParentAndVisit, neighbours);
     }
 };
