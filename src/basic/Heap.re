@@ -89,6 +89,41 @@ let add = (heap, key, value) => {
     fix_last(heap);
 };
 
+let search = ({queue, _}, match) => {
+    let size = Array.length(queue);
+
+    let rec checkSuffix = ind => {
+        switch ind {
+        | ind when (ind == size) => None;
+        | _ => {
+            let elem = Array.get(queue, ind);
+            if (match(elem.key, elem.value)) {
+                Some(ind);
+            } else {
+                checkSuffix(ind + 1);    
+            };
+        };
+        };
+    };
+    checkSuffix(0);
+};
+
+exception RemoveElementNotFound;
+
+let remove = ({queue, compare}, match) => {
+    let index = search({queue, compare}, match);
+    switch index {
+    | None => raise(RemoveElementNotFound);
+    | Some(index) => {
+        let size = Array.length(queue);
+        Array.swap(queue, index, size - 1);
+        let res = Array.pop(queue);
+        sift_down({queue, compare}, index);
+        res.value;
+    };
+    };
+};
+
 let head = ({queue}) => {
     let heap_size = Array.length(queue);
     switch heap_size {
