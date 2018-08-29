@@ -50,6 +50,34 @@ describe("Heap", () => {
         expect(head) |> toBe("3");
     });
 
+    test("remove", () => {
+        let heap = setup();
+
+        let match = (_, value, ~match_value) => value == match_value;
+
+        let removeSmallestN = n => {
+            let rec rem =
+                fun
+                | -1 => ()
+                | x => {
+                    let value = string_of_int(x);
+                    remove(heap, match(~match_value=value)) |> ignore;
+                    rem(x-1);
+                };
+            rem(n-1);
+        };
+
+        removeSmallestN(10);
+        
+        let res1 = extract(heap);
+        let res2 = extract(heap);
+        let res3 = extract(heap);
+
+        expect((res1, res2, res3)) |> toEqual(
+            ("10", "11", "12"));
+
+    });
+
     test("heap sort", () => {
         let heap = setup();
 
