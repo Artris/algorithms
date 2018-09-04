@@ -75,7 +75,37 @@ describe("Heap", () => {
 
         expect((res1, res2, res3)) |> toEqual(
             ("10", "11", "12"));
+    });
 
+    test("update", () => {
+        let heap = setup();
+
+        let match = (_, value, ~match_value) => value == match_value;
+
+        let decrementSmallestN = n => {
+            let rec rem =
+                fun
+                | -1 => ()
+                | x => {
+                    let value = string_of_int(x);
+                    update(
+                        heap, 
+                        match(~match_value=value),
+                        x-1,
+                        string_of_int(x-1)) |> ignore;
+                    rem(x-1);
+                };
+            rem(n-1);
+        };
+
+        decrementSmallestN(10);
+        
+        let res1 = extract(heap);
+        let res2 = extract(heap);
+        let res3 = extract(heap);
+
+        expect((res1, res2, res3)) |> toEqual(
+            ("-1", "0", "1"));
     });
 
     test("heap sort", () => {
