@@ -1,75 +1,73 @@
 type node = {
     id: string,
-    neighbours: list(string),
+    children: list(string),
 };
-
-type mark =
-  | Temp
-  | Perm;
 
 type directedGraph = list(node);
 
-exception Not_found(string);
+exception Invalid_node_id(string);
 
 exception Graph_not_DAG;
 
 let parseAdjList = adj_list => {
     let adj_tbl = Hashtbl.create(List.length(adj_list));
-    let insert = ({id, neighbours}) => {
-        Hashtbl.add(adj_tbl, id, neighbours);
+    let insert = ({id, children}) => {
+        Hashtbl.add(adj_tbl, id, children);
     };
 
     List.iter(insert, adj_list);
-    let validateNeighbours = node => {
-        List.iter(neighbour => {
-            if (!Hashtbl.mem(adj_tbl, neighbour)) {
-                raise(Not_found(neighbour));
+    let validateChildren = node => {
+        List.iter(child_id => {
+            if (!Hashtbl.mem(adj_tbl, child_id)) {
+                raise(Invalid_node_id(child_id));
             }
-        }, node.neighbours);
+        }, node.children);
     };
 
-    List.iter(validateNeighbours, adj_list);
+    List.iter(validateChildren, adj_list);
     adj_tbl;
 };
 
-let rec visit = (~node_id, ~adj_tbl, ~mark_tbl, ~list) => {
-    if (Hashtbl.mem(mark_tbl, node_id)) {
-        switch (Hashtbl.find(mark_tbl, node_id)) {
-            | Temp => raise(Graph_not_DAG);
-            | Perm => list;
+let rec visit = (~node_id, ~adj_tbl, ~visited, ~ordering, ~ancestors) => {
+    if (Hashtbl.mem(visited, node_id)) {
+        let pred = id => id == node_id;
+        switch (List.find(pred, ancestors)) {
+        | exception Not_found => ordering;
+        | _ => raise(Graph_not_DAG);
         };
     }
     else {
-        let neighbours = Hashtbl.find(adj_tbl, node_id);
-        let visitNeighbour = (sorting, neighbour_id) => {
+        let ancestors = List.append(ancestors, [node_id]);
+        let children = Hashtbl.find(adj_tbl, node_id);
+        let visitChild = (ordering, child_id) => {
             visit(
-            ~node_id=neighbour_id,
+            ~node_id=child_id,
             ~adj_tbl=adj_tbl,
-            ~mark_tbl=mark_tbl,
-            ~list=sorting);
+            ~visited=visited,
+            ~ordering=ordering,
+            ~ancestors=ancestors);
         };
         
-        Hashtbl.add(mark_tbl, node_id, Temp);
-        let list = List.fold_left(visitNeighbour, list, neighbours);
-        Hashtbl.add(mark_tbl, node_id, Perm);
-
+        Hashtbl.add(visited, node_id, node_id);
+        let list = List.fold_left(visitChild, ordering, children);
         List.append(list, [node_id]);
     };
 };
 
 let sort = adj_list => {
     let num_nodes = List.length(adj_list);
-    let mark_tbl = Hashtbl.create(num_nodes);
     let adj_tbl = parseAdjList(adj_list);
+    let visited = Hashtbl.create(num_nodes);
 
-    let traverse = (list, node) => {
+    let traverse = (ordering, node) => {
         visit(
         ~node_id=node.id, 
         ~adj_tbl=adj_tbl,
-        ~mark_tbl=mark_tbl,
-        ~list=list);
+        ~visited=visited,
+        ~ordering=ordering,
+        ~ancestors=[]);
     };
 
-    let list = List.fold_left(traverse, [], adj_list);
-    List.rev(list);
+    let top_sorting = List.fold_left(traverse, [], adj_list);
+    List.rev(top_sorting);
 };

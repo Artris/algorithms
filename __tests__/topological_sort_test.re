@@ -5,7 +5,7 @@ describe("Topological Sort", () => {
     open TopologicalSort;
 
     test("single node", () => {
-        let adj_list = [{id: "A", neighbours: []}];
+        let adj_list = [{id: "A", children: []}];
         let expected_sorting = ["A"];
         let sorting = sort(adj_list);
 
@@ -15,10 +15,10 @@ describe("Topological Sort", () => {
     test("simple tree", () => {
 
         let adj_list = [
-            {id: "A", neighbours: ["B"]},
-            {id: "B", neighbours: ["C"]}, 
-            {id: "C", neighbours: ["D"]}, 
-            {id: "D", neighbours: []}
+            {id: "A", children: ["B"]},
+            {id: "B", children: ["C"]}, 
+            {id: "C", children: ["D"]}, 
+            {id: "D", children: []}
             ];
 
             let expected_sorting = ["A", "B", "C", "D"];
@@ -30,10 +30,10 @@ describe("Topological Sort", () => {
     test("star graph", () => {
 
         let adj_list = [
-            {id: "A", neighbours: []},
-            {id: "B", neighbours: ["A"]}, 
-            {id: "C", neighbours: ["A"]}, 
-            {id: "D", neighbours: ["A"]}];
+            {id: "A", children: []},
+            {id: "B", children: ["A"]}, 
+            {id: "C", children: ["A"]}, 
+            {id: "D", children: ["A"]}];
 
             let expected_sorting = ["D", "C", "B", "A"];
             let sorting = sort(adj_list);
@@ -44,10 +44,10 @@ describe("Topological Sort", () => {
     test("forest", () => {
 
         let adj_list = [
-            {id: "A", neighbours: ["B"]},
-            {id: "B", neighbours: []}, 
-            {id: "C", neighbours: ["D"]}, 
-            {id: "D", neighbours: []}];
+            {id: "A", children: ["B"]},
+            {id: "B", children: []}, 
+            {id: "C", children: ["D"]}, 
+            {id: "D", children: []}];
 
             let expected_sorting = ["C", "D", "A", "B"];
             let sorting = sort(adj_list);

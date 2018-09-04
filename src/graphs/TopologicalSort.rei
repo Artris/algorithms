@@ -1,6 +1,6 @@
 type node = {
     id: string,
-    neighbours: list(string),
+    children: list(string),
 };
 
 type directedGraph = list(node);
