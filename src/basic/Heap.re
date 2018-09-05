@@ -124,6 +124,11 @@ let remove = ({queue, compare}, match) => {
     };
 };
 
+let update = ({queue, compare}, match, new_key, new_value) => {
+    remove({queue, compare}, match);
+    add({queue, compare}, new_key, new_value);
+};
+
 let head = ({queue}) => {
     let heap_size = Array.length(queue);
     switch heap_size {
